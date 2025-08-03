@@ -20,6 +20,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// --- Middleware ---
 const verifyFirebaseToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -37,6 +38,9 @@ const verifyFirebaseToken = async (req, res, next) => {
   }
 };
 
+// --- API Routes (with /api prefix) ---
+
+// GET /api/progress: Fetches the progress for the authenticated user
 app.get('/api/progress', verifyFirebaseToken, async (req, res) => {
   try {
     const userId = req.user.uid;
@@ -53,6 +57,7 @@ app.get('/api/progress', verifyFirebaseToken, async (req, res) => {
   }
 });
 
+// POST /api/progress: Updates the progress for the authenticated user
 app.post('/api/progress', verifyFirebaseToken, async (req, res) => {
   try {
     const userId = req.user.uid;
@@ -70,6 +75,7 @@ app.post('/api/progress', verifyFirebaseToken, async (req, res) => {
   }
 });
 
+// --- Server Initialization ---
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
