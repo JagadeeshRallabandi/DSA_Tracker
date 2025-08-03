@@ -13,7 +13,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const API_URL = 'http://localhost:5000/api';
+  const API_URL = 'https://dsa-tracker-beryl-five.vercel.app/api'; // Update with your backend URL
 
   const totalDays = 80;
 
