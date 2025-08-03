@@ -1,18 +1,28 @@
 // File: dsa-tracker-backend/index.js
 
+// Load environment variables from .env file for local development
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const admin = require('firebase-admin');
 
-const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
-if (!serviceAccountString) {
-  throw new Error('The FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
+// --- Firebase Admin SDK Initialization ---
+// This logic checks if a FIREBASE_SERVICE_ACCOUNT environment variable exists (for Vercel)
+// If not, it falls back to using the local serviceAccountKey.json file (for local development)
+let serviceAccount;
+if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+  // On Vercel, parse the environment variable string into a JSON object
+  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+} else {
+  // Locally, require the file as usual
+  serviceAccount = require('./serviceAccountKey.json');
 }
-const serviceAccount = JSON.parse(serviceAccountString);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
+
 const db = admin.firestore();
 const auth = admin.auth();
 
@@ -38,9 +48,7 @@ const verifyFirebaseToken = async (req, res, next) => {
   }
 };
 
-// --- API Routes (with /api prefix) ---
-
-// GET /api/progress: Fetches the progress for the authenticated user
+// --- API Routes ---
 app.get('/api/progress', verifyFirebaseToken, async (req, res) => {
   try {
     const userId = req.user.uid;
@@ -57,7 +65,6 @@ app.get('/api/progress', verifyFirebaseToken, async (req, res) => {
   }
 });
 
-// POST /api/progress: Updates the progress for the authenticated user
 app.post('/api/progress', verifyFirebaseToken, async (req, res) => {
   try {
     const userId = req.user.uid;
