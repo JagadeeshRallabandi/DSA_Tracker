@@ -12,7 +12,7 @@ const Dashboard = () => {
   const [completedDays, setCompletedDays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const API_URL = 'https://dsa-tracker-api.onrender.com/api';
+  const API_URL = 'https://dsa-tracker-backend-p2wp.onrender.com/api';
 
   const totalDays = 80;
 
